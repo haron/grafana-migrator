@@ -1,5 +1,5 @@
-INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('TeamForge Developers','teamforge-developers',NULL,127,FALSE,1,'',TRUE);
-INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('CEE Developers','cee-developers',NULL,2,FALSE,2,'',TRUE);
-INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('SVNEdge Developers','svnedge-developers',NULL,1,FALSE,3,'',TRUE);
-INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('Release Engineering','releng',NULL,7,FALSE,4,'',TRUE);
-INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('lm-developers','lm-developers',NULL,1,FALSE,5,'',TRUE);
+INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('Developers','developers',NULL,127,FALSE,1,'',TRUE);
+INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('Testers','testers',NULL,2,FALSE,2,'',TRUE);
+INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('QA','qa',NULL,1,FALSE,3,'',TRUE);
+INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('Release Engineers','releng',NULL,7,FALSE,4,'',TRUE);
+INSERT INTO "reviews_group" ("display_name", "name", "local_site_id", "incoming_request_count", "invite_only", "id", "mailing_list", "visible") VALUES('Managers','mgrs',NULL,1,FALSE,5,'',TRUE);

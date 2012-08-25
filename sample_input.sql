@@ -9,9 +9,9 @@
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION; 
 CREATE TABLE "reviews_group"("display_name" varchar(64) NOT NULL, "name" varchar(64) NOT NULL, "local_site_id" integer NULL, "incoming_request_count" integer NULL, "invite_only" bool NOT NULL, "id" integer NOT NULL UNIQUE PRIMARY KEY, "mailing_list" varchar(75) NOT NULL, "visible" bool NOT NULL);
-INSERT INTO "reviews_group" VALUES('TeamForge Developers','teamforge-developers',NULL,127,0,1,'',1);
-INSERT INTO "reviews_group" VALUES('CEE Developers','cee-developers',NULL,2,0,2,'',1);
-INSERT INTO "reviews_group" VALUES('SVNEdge Developers','svnedge-developers',NULL,1,0,3,'',1);
-INSERT INTO "reviews_group" VALUES('Release Engineering','releng',NULL,7,0,4,'',1);
-INSERT INTO "reviews_group" VALUES('lm-developers','lm-developers',NULL,1,0,5,'',1);
+INSERT INTO "reviews_group" VALUES('Developers','developers',NULL,127,0,1,'',1);
+INSERT INTO "reviews_group" VALUES('Testers','testers',NULL,2,0,2,'',1);
+INSERT INTO "reviews_group" VALUES('QA','qa',NULL,1,0,3,'',1);
+INSERT INTO "reviews_group" VALUES('Release Engineers','releng',NULL,7,0,4,'',1);
+INSERT INTO "reviews_group" VALUES('Managers','mgrs',NULL,1,0,5,'',1);
 COMMIT;
