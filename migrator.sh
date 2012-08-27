@@ -62,5 +62,8 @@ echo 'Removing temporary files..'
 rm $3/*.dump
 rm $3/lsoftbls
 
+echo 'Removing empty dump files..'
+wc -l $3/*.psql | grep -w 0 | awk '{ print $NF }' | xargs rm
+
 echo ; echo 'Done.'; echo
 echo 'Please find the psql dumps at '$3

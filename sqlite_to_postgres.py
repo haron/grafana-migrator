@@ -134,8 +134,8 @@ def process_dump(input_file,output_file):
     if not insert_started:
       if line.startswith('CREATE TABLE'):
         table_name = line[line.index('"'):]
-        table_name = table_name[:table_name.index('(')] # '"table_name"'
-        insert_stmt_start = 'INSERT INTO ' + table_name + ' VALUES('
+        table_name = table_name[:table_name.index('"',1)+1] # '"table_name"'
+        insert_stmt_start = 'INSERT INTO ' + table_name
       elif line.startswith('INSERT'): 
         insert_started = True
       else: continue
@@ -152,10 +152,10 @@ def process_dump(input_file,output_file):
       insert_lines.append(line)
 
   if not insert_lines: return
-  while insert_lines[-1].endswith(';') and \
+  while insert_lines[-1].endswith(';\n') and \
         (insert_lines[-1].startswith('CREATE INDEX') or \
          insert_lines[-1].startswith('COMMIT')):
-    insert_lines.pop()    #remove the create index and commit lines at the end
+    print insert_lines.pop()    #remove the create index and commit lines at the end
   process_insert(insert_lines) #fix the last insert statement
 
       
