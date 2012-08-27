@@ -155,7 +155,7 @@ def process_dump(input_file,output_file):
   while insert_lines[-1].endswith(';\n') and \
         (insert_lines[-1].startswith('CREATE INDEX') or \
          insert_lines[-1].startswith('COMMIT')):
-    print insert_lines.pop()    #remove the create index and commit lines at the end
+    insert_lines.pop()    #remove the create index and commit lines at the end
   process_insert(insert_lines) #fix the last insert statement
 
       

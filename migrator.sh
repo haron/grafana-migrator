@@ -43,7 +43,11 @@ echo .tables | sqlite3 $2 > $3/lsoftbls
 for i in `cat $3/lsoftbls`
 do
   echo 'Generating sqlite dumps for '$i
-  echo '.output '$3'/'$i'.dump\npragma table_info('$i');\n.dump '$i'\n.quit' | sqlite3 $2
+  echo '.output '$3'/'$i'.dump' > $3/dumper
+  echo 'pragma table_info('$i');' >> $3/dumper
+  echo '.dump '$i >> $3/dumper
+  echo '.quit'  >> $3/dumper
+  cat $3/dumper | sqlite3 $2
 done
 
 #Use the python script to convert the sqlite dumps to psql dumps
@@ -61,6 +65,7 @@ echo
 echo 'Removing temporary files..'
 rm $3/*.dump
 rm $3/lsoftbls
+rm $3/dumper
 
 echo 'Removing empty dump files..'
 wc -l $3/*.psql | grep -w 0 | awk '{ print $NF }' | xargs rm
