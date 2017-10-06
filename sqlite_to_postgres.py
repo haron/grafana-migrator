@@ -79,16 +79,16 @@ def fix_bool(stmt):
 def get_psql_inserts(insert_lines):
   '''
   This method will get a list of one or more lines that together constitute
-  a single insert statement from the sqlite dump, manipulates it and 
+  a single insert statement from the sqlite dump, manipulates it and
   returns the list containing the psql compatible insert statement.
   '''
   global BOUNDARY
 
   #First fix the column name issue.
   insert_lines[0] = fix_column_names(insert_lines[0])
-  
+
   if 'bool' in COLUMN_TYPES:
-    insert_stmt = BOUNDARY.join(insert_lines) 
+    insert_stmt = BOUNDARY.join(insert_lines)
     insert_stmt = fix_bool(insert_stmt)
     insert_lines = insert_stmt.split(BOUNDARY)
 
@@ -111,7 +111,7 @@ def process_dump(input_file,output_file):
   global COLUMN_TYPES
   after_pragma = False     #The first few lines will be schema info upto the
                            #line that starts with "PRAGMA"
-  insert_started = False   
+  insert_started = False
   insert_lines = []
   insert_stmt_start = 'INSERT'
 
@@ -127,19 +127,19 @@ def process_dump(input_file,output_file):
         #Python uses single quotes for enclosing a string.
         #But psql uses double quotes on "column names" and
         #single quotes on strings inside VALUES(..)
-        COLUMN_NAMES = ' ' + COLUMN_NAMES.replace("'",'"') 
+        COLUMN_NAMES = ' ' + COLUMN_NAMES.replace("'",'"')
       continue
 
-    #Ignore the lines from PRAGMA and before INSERT. 
+    #Ignore the lines from PRAGMA and before INSERT.
     if not insert_started:
       if line.startswith('CREATE TABLE'):
         table_name = line[line.index('"'):]
         table_name = table_name[:table_name.index('"',1)+1] # '"table_name"'
         insert_stmt_start = 'INSERT INTO ' + table_name
-      elif line.startswith('INSERT'): 
+      elif line.startswith('INSERT'):
         insert_started = True
       else: continue
-      
+
     #If the control reaches here, it must mean that the first insert statement
     #has appeared. But the insert statements may span multiple lines. So, we
     #collect those lines and process them.
@@ -148,7 +148,7 @@ def process_dump(input_file,output_file):
       if insert_lines:               #True from 2nd insert statement
         process_insert(insert_lines) #Insert the previous insert statement
       insert_lines = [line]          #and append the current one
-    elif insert_lines: 
+    elif insert_lines:
       insert_lines.append(line)
 
   if not insert_lines: return
@@ -158,16 +158,14 @@ def process_dump(input_file,output_file):
     insert_lines.pop()    #remove the create index and commit lines at the end
   process_insert(insert_lines) #fix the last insert statement
 
-      
 
-  
 if __name__ == '__main__':
   if len(sys.argv) != 2:
     usage()
-  
+
   filename = sys.argv[1]
   output_filename = filename + '.psql'
-  
+
   if not os.path.isfile(filename):
     print "FATAL: Not a valid filename"
     usage()
