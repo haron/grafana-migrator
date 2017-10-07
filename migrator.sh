@@ -109,10 +109,10 @@ ALTER TABLE "user" ALTER COLUMN email_verified TYPE integer USING email_verified
 SQL
 
 #Import PostgreSQL dumps into Grafana DB
-#for f in $3/*.dump.psql
-#do
-#  psql grafana < "$f";
-#done
+for f in $3/*.dump.psql
+do
+  psql grafana < "$f";
+done
 
 #Undo workaround for PostgreSQL Grafana DB boolean columns
 psql grafana <<SQL
