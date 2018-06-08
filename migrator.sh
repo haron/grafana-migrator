@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 usage_error () {
     echo 'Usage: sh migrator.sh <path to sqlite_to_postgres.py> <path to sqlite db file> <an empty dir to output dump files>'
@@ -95,9 +95,14 @@ psql grafana <<SQL
 ALTER TABLE alert ALTER COLUMN silenced TYPE integer USING silenced::integer;
 ALTER TABLE alert_notification ALTER COLUMN is_default DROP DEFAULT;
 ALTER TABLE alert_notification ALTER COLUMN is_default TYPE integer USING is_default::integer;
+ALTER TABLE dashboard ALTER COLUMN is_folder DROP DEFAULT;
+ALTER TABLE dashboard ALTER COLUMN is_folder TYPE integer USING is_folder::integer;
+ALTER TABLE dashboard ALTER COLUMN has_acl DROP DEFAULT;
+ALTER TABLE dashboard ALTER COLUMN has_acl TYPE integer USING has_acl::integer;
 ALTER TABLE dashboard_snapshot ALTER COLUMN external TYPE integer USING external::integer;
 ALTER TABLE data_source ALTER COLUMN basic_auth TYPE integer USING basic_auth::integer;
 ALTER TABLE data_source ALTER COLUMN is_default TYPE integer USING is_default::integer;
+ALTER TABLE data_source ALTER COLUMN read_only TYPE integer USING read_only::integer;
 ALTER TABLE data_source ALTER COLUMN with_credentials DROP DEFAULT;
 ALTER TABLE data_source ALTER COLUMN with_credentials TYPE integer USING with_credentials::integer;
 ALTER TABLE migration_log ALTER COLUMN success TYPE integer USING success::integer;
@@ -129,6 +134,18 @@ ALTER TABLE alert_notification
       ELSE NULL
       END;
 ALTER TABLE alert_notification ALTER COLUMN is_default SET DEFAULT false;
+ALTER TABLE dashboard
+  ALTER COLUMN is_folder TYPE boolean
+    USING CASE WHEN is_folder = 0 THEN FALSE
+      WHEN is_folder = 1 THEN TRUE
+      ELSE NULL
+      END;
+ALTER TABLE dashboard
+  ALTER COLUMN has_acl TYPE boolean
+    USING CASE WHEN has_acl = 0 THEN FALSE
+      WHEN has_acl = 1 THEN TRUE
+      ELSE NULL
+      END;
 ALTER TABLE dashboard_snapshot
   ALTER COLUMN external TYPE boolean
     USING CASE WHEN external = 0 THEN FALSE
@@ -145,6 +162,12 @@ ALTER TABLE data_source
   ALTER COLUMN is_default TYPE boolean
     USING CASE WHEN is_default = 0 THEN FALSE
       WHEN is_default = 1 THEN TRUE
+      ELSE NULL
+      END;
+ALTER TABLE data_source
+  ALTER COLUMN read_only TYPE boolean
+    USING CASE WHEN read_only = 0 THEN FALSE
+      WHEN read_only = 1 THEN TRUE
       ELSE NULL
       END;
 ALTER TABLE data_source
@@ -191,5 +214,42 @@ ALTER TABLE "user"
       ELSE NULL
       END;
 SQL
+
+TABLES_WITH_SEQ=(
+    alert
+    alert_notification
+    annotation
+    api_key
+    dashboard_acl
+    dashboard
+    dashboard_provisioning
+    dashboard_snapshot
+    dashboard_tag
+    dashboard_version
+    data_source
+    login_attempt
+    migration_log
+    org
+    org_user
+    playlist
+    playlist_item
+    plugin_setting
+    preferences
+    quota
+    star
+    tag
+    team
+    team_member
+    temp_user
+    test_data
+    user_auth
+)
+
+# thanks to this great answer: https://stackoverflow.com/a/3698777/452467
+for TABLE in ${TABLES_WITH_SEQ[@]}; do
+    psql grafana -c "SELECT setval(pg_get_serial_sequence('$TABLE', 'id'), coalesce(max(id),0) + 1, false) FROM $TABLE;"
+done
+
+psql grafana -c "SELECT setval('user_id_seq1', (SELECT MAX(id)+1 FROM \"user\"));"
 
 echo ; echo 'Done.'; echo
