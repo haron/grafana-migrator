@@ -35,6 +35,15 @@ Run migration script:
 
     ./migrator.sh sqlite_to_postgres.py ./grafana.db . 2>&1 | tee migrator.log
 
+You can change the default `python` and `psql` commands using environment
+variables.
+
+Eg: if you want run it using `python2` pointing to a remote postgres database:
+
+    PYTHON_CMD=python2 \
+    PSQL_CMD='psql -h PG_HOST -U PG_USER' \
+    ./migrator.sh sqlite_to_postgres.py ./grafana.db . 2>&1 | tee migration.log
+
 And check `migrator.log` for errors. If none found, then the migration was successful - start Grafana and enjoy your new database experience. If you see any errors other than listed below, then most likely you were trying to upgrade newer Grafana version.
 
 Errors like this one can be safely ignored:
