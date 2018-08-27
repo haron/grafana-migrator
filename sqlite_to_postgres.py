@@ -21,13 +21,14 @@ def usage():
 
 def fix_table_name(first_line):
   '''
-  The insert statement from sqlite3 dump is as follows:
+  The insert statement from sqlite3 dump is as follows (without double quotes at table name):
     INSERT INTO test VALUES(1,'Hello');
 
   We need to add the column information to the statements like this:
     INSERT INTO "test" VALUES(1,'Wibble');
 
-  This is necessary because the column orders may be different in psql db.
+  This is necessary because if the table name is also a reserved word in psql the insert
+  statament is going to fail.
   '''
 
   start = first_line.find('INSERT INTO ') + 12
@@ -41,7 +42,7 @@ def fix_table_name(first_line):
 def fix_column_names(first_line):
   '''
   The insert statement from sqlite3 dump is as follows:
-    INSERT INTO "test" VALUES(1,'Hello');
+    INSERT INTO test VALUES(1,'Hello');
 
   We need to add the column information to the statements like this:
     INSERT INTO "test" (id,name) VALUES(1,'Wibble');
