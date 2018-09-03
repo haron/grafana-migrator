@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
+
+PYTHON_CMD=${PYTHON_CMD:-python}
+PSQL_CMD=${PSQL_CMD:-psql grafana}
+
 usage_error () {
     echo 'Usage: sh migrator.sh <path to sqlite_to_postgres.py> <path to sqlite db file> <an empty dir to output dump files>'
     echo
@@ -67,7 +72,7 @@ echo 'Now converting the sqlite dumps into psql format...'
 echo
 for i in `ls -1 $3/*.dump`
 do
-  python $1 $i
+  $PYTHON_CMD $1 $i
 done
 
 #Remove the sqlite3 dumps and the file 'lsoftbls'
@@ -86,12 +91,12 @@ echo 'Now converting hex sequences in dumps to printable characters...'
 echo
 for i in `ls -1 $3/*.dump.psql`
 do
-  python hex_to_str.py $i
+  $PYTHON_CMD hex_to_str.py $i
   sed -i '/^\s*$/d' $i
 done
 
 #Workaround for PostgreSQL Grafana DB boolean columns
-psql grafana <<SQL
+$PSQL_CMD <<SQL
 ALTER TABLE alert ALTER COLUMN silenced TYPE integer USING silenced::integer;
 ALTER TABLE alert_notification ALTER COLUMN is_default DROP DEFAULT;
 ALTER TABLE alert_notification ALTER COLUMN is_default TYPE integer USING is_default::integer;
@@ -116,11 +121,11 @@ SQL
 #Import PostgreSQL dumps into Grafana DB
 for f in $3/*.dump.psql
 do
-  psql grafana < "$f";
+  $PSQL_CMD < "$f";
 done
 
 #Undo workaround for PostgreSQL Grafana DB boolean columns
-psql grafana <<SQL
+$PSQL_CMD <<SQL
 ALTER TABLE alert
   ALTER COLUMN silenced TYPE boolean
     USING CASE WHEN silenced = 0 THEN FALSE
@@ -247,9 +252,9 @@ TABLES_WITH_SEQ=(
 
 # thanks to this great answer: https://stackoverflow.com/a/3698777/452467
 for TABLE in ${TABLES_WITH_SEQ[@]}; do
-    psql grafana -c "SELECT setval(pg_get_serial_sequence('$TABLE', 'id'), coalesce(max(id),0) + 1, false) FROM $TABLE;"
+    $PSQL_CMD -c "SELECT setval(pg_get_serial_sequence('$TABLE', 'id'), coalesce(max(id),0) + 1, false) FROM $TABLE;"
 done
 
-psql grafana -c "SELECT setval('user_id_seq1', (SELECT MAX(id)+1 FROM \"user\"));"
+$PSQL_CMD -c "SELECT setval('user_id_seq1', (SELECT MAX(id)+1 FROM \"user\"));"
 
 echo ; echo 'Done.'; echo

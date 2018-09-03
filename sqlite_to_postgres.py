@@ -19,10 +19,30 @@ def usage():
   print "Usage: ./bool_changer.py <filename.dump>"
   sys.exit()
 
+def fix_table_name(first_line):
+  '''
+  The insert statement from sqlite3 dump is as follows (without double quotes at table name):
+    INSERT INTO test VALUES(1,'Hello');
+
+  We need to add the column information to the statements like this:
+    INSERT INTO "test" VALUES(1,'Wibble');
+
+  This is necessary because if the table name is also a reserved word in psql the insert
+  statament is going to fail.
+  '''
+
+  start = first_line.find('INSERT INTO ') + 12
+  end = first_line.find(' VALUES')
+  table_name = first_line[start:end]
+  if table_name.startswith('"'):
+    return first_line
+
+  return first_line.replace('INSERT INTO ' + table_name, 'INSERT INTO "' + table_name + '"')
+
 def fix_column_names(first_line):
   '''
   The insert statement from sqlite3 dump is as follows:
-    INSERT INTO "test" VALUES(1,'Hello');
+    INSERT INTO test VALUES(1,'Hello');
 
   We need to add the column information to the statements like this:
     INSERT INTO "test" (id,name) VALUES(1,'Wibble');
@@ -84,6 +104,7 @@ def get_psql_inserts(insert_lines):
   '''
   global BOUNDARY
 
+  insert_lines[0] = fix_table_name(insert_lines[0])
   #First fix the column name issue.
   insert_lines[0] = fix_column_names(insert_lines[0])
 
