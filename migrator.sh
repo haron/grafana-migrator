@@ -255,6 +255,6 @@ for TABLE in ${TABLES_WITH_SEQ[@]}; do
     $PSQL_CMD -c "SELECT setval(pg_get_serial_sequence('$TABLE', 'id'), coalesce(max(id),0) + 1, false) FROM $TABLE;"
 done
 
-$PSQL_CMD -c "SELECT setval('user_id_seq1', (SELECT MAX(id)+1 FROM \"user\"));"
+$PSQL_CMD -c "SELECT setval('user_id_seq', (SELECT MAX(id)+1 FROM \"user\"));"
 
 echo ; echo 'Done.'; echo
