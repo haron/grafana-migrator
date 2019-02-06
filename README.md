@@ -1,8 +1,12 @@
-# Migrating Grafana 5.1.3 from SQLite to PostgreSQL
+# Migrating Grafana from SQLite to PostgreSQL
 
 ## Credits
 
 This code is an adaption of [this gist](https://gist.github.com/pizjix/158e632495f67b3bda52b41b14ec600d) to the newer Grafana version (namely 5.1.3), so all credit goes to the author. Many thanks for the blog post [Migrating Grafana from SQLite to PostgreSQL](https://pizjix.com/migrating-grafana-from-sqlite-to-postgresql/). Also `migrator.sh` is largely based on [SQLite to PostgreSQL dump convertor script](https://gist.github.com/vigneshwaranr/3454093).
+
+## Tested Versions of Grafana
+
+This code has been explicity tested with databases from Grafana 5.1.3 and 5.4.3. Other versions may or may not work without modification.
 
 ## Prerequisites
 
