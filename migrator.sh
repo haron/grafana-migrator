@@ -59,7 +59,6 @@ done
 echo
 echo 'Remove unneeded dumps'
 rm $3/migration_log.dump
-rm $3/org.dump
 rm $3/plugin_setting.dump
 echo 'Replacing ` with "'
 sed -i s/\`/\"/g $3/*.dump;
