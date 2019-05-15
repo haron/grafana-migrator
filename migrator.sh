@@ -59,7 +59,6 @@ done
 echo
 echo 'Remove unneeded dumps'
 rm $3/migration_log.dump
-rm $3/org.dump
 rm $3/plugin_setting.dump
 echo 'Replacing ` with "'
 sed -i s/\`/\"/g $3/*.dump;
@@ -95,7 +94,6 @@ do
   sed -i '/^\s*$/d' $i
 done
 
-#Workaround for PostgreSQL Grafana DB boolean columns
 $PSQL_CMD <<SQL
 ALTER TABLE alert ALTER COLUMN silenced TYPE integer USING silenced::integer;
 ALTER TABLE alert_notification ALTER COLUMN is_default DROP DEFAULT;
@@ -113,10 +111,15 @@ ALTER TABLE data_source ALTER COLUMN with_credentials TYPE integer USING with_cr
 ALTER TABLE migration_log ALTER COLUMN success TYPE integer USING success::integer;
 ALTER TABLE plugin_setting ALTER COLUMN enabled TYPE integer USING enabled::integer;
 ALTER TABLE plugin_setting ALTER COLUMN pinned TYPE integer USING pinned::integer;
+ALTER TABLE team_member ALTER COLUMN external TYPE integer USING external::integer;
 ALTER TABLE temp_user ALTER COLUMN email_sent TYPE integer USING email_sent::integer;
 ALTER TABLE "user" ALTER COLUMN is_admin TYPE integer USING is_admin::integer;
 ALTER TABLE "user" ALTER COLUMN email_verified TYPE integer USING email_verified::integer;
 SQL
+
+# Remove default org
+$PSQL_CMD -c "DELETE from org where id=1;"
+
 
 #Import PostgreSQL dumps into Grafana DB
 for f in $3/*.dump.psql
@@ -200,6 +203,12 @@ ALTER TABLE plugin_setting
       WHEN pinned = 1 THEN TRUE
       ELSE NULL
       END;
+ALTER TABLE team_member
+  ALTER COLUMN external TYPE boolean
+    USING CASE WHEN external = 0 THEN FALSE
+      WHEN external = 1 THEN TRUE
+      ELSE NULL
+      END;
 ALTER TABLE temp_user
   ALTER COLUMN email_sent TYPE boolean
     USING CASE WHEN email_sent = 0 THEN FALSE
@@ -255,6 +264,8 @@ for TABLE in ${TABLES_WITH_SEQ[@]}; do
     $PSQL_CMD -c "SELECT setval(pg_get_serial_sequence('$TABLE', 'id'), coalesce(max(id),0) + 1, false) FROM $TABLE;"
 done
 
-$PSQL_CMD -c "SELECT setval('user_id_seq', (SELECT MAX(id)+1 FROM \"user\"));"
+$PSQL_CMD -c "SELECT setval('user_id_seq1', (SELECT MAX(id)+1 FROM \"user\"));"
+
+rm *.dump*
 
 echo ; echo 'Done.'; echo
