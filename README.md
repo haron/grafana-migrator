@@ -8,6 +8,8 @@ This code is an adaption of [this gist](https://gist.github.com/pizjix/158e63249
 
 This code has been explicity tested with databases from Grafana 5.1.3 and 5.4.3. Other versions may or may not work without modification.
 
+Note: Grafana 5.2.4 didn't not have the proper alarm schema for Postgresql. Please upgrade to 5.4.4 before attempting migration
+
 ## Prerequisites
 
 All commands are executed on PostgreSQL server. I assume that Grafana is running on the same server as PostgreSQL, otherwise, commands related to Grafana should be corrected accordingly. This README covers Ubuntu 16.04 only.
