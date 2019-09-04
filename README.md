@@ -29,7 +29,7 @@ and make sure that file permissions are `0600`. Copy Grafana DB file to the curr
 
 [Configure Grafana to use PostgreSQL database](http://docs.grafana.org/installation/configuration/#database), then start Grafana and stop it immediately:
 
-    sudo service grafana-server start && sleep15 && sudo service grafana-server stop
+    sudo service grafana-server start && sleep 15 && sudo service grafana-server stop
 
 The goal of this step is to make Grafana create DB schema - tables, sequences, etc,
 make sure that the database is fully created.
