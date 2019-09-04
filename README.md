@@ -6,7 +6,7 @@ This code is an adaption of [this gist](https://gist.github.com/pizjix/158e63249
 
 ## Tested Versions of Grafana
 
-This code has been explicity tested with databases from Grafana 5.1.3 and 6.1.6. Other versions may or may not work without modification.
+This code has been explicity tested with databases from Grafana 6.3.5. Other versions may or may not work without modification.
 
 ## Prerequisites
 
