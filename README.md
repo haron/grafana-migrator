@@ -29,9 +29,10 @@ and make sure that file permissions are `0600`. Copy Grafana DB file to the curr
 
 [Configure Grafana to use PostgreSQL database](http://docs.grafana.org/installation/configuration/#database), then start Grafana and stop it immediately:
 
-    sudo service grafana-server start && sudo service grafana-server stop
+    sudo service grafana-server start && sleep15 && sudo service grafana-server stop
 
-The goal of this step is to make Grafana create DB schema - tables, sequences, etc.
+The goal of this step is to make Grafana create DB schema - tables, sequences, etc,
+make sure that the database is fully created.
 
 ### Migration itself
 
@@ -47,6 +48,9 @@ Eg: if you want run it using `python2` pointing to a remote postgres database:
     PYTHON_CMD=python2 \
     PSQL_CMD='psql -h PG_HOST -U PG_USER' \
     ./migrator.sh sqlite_to_postgres.py ./grafana.db . 2>&1 | tee migration.log
+
+    PSQL_CMD='sudo -u postgres psql grafana' \
+      ./migrator.sh sqlite_to_postgres.py ./grafana.db . 2>&1 | tee migration.log
 
 And check `migrator.log` for errors. If none found, then the migration was successful - start Grafana and enjoy your new database experience. If you see any errors other than listed below, then most likely you were trying to upgrade newer Grafana version.
 
