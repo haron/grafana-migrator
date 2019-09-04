@@ -98,6 +98,10 @@ $PSQL_CMD <<SQL
 ALTER TABLE alert ALTER COLUMN silenced TYPE integer USING silenced::integer;
 ALTER TABLE alert_notification ALTER COLUMN is_default DROP DEFAULT;
 ALTER TABLE alert_notification ALTER COLUMN is_default TYPE integer USING is_default::integer;
+ALTER TABLE alert_notification ALTER COLUMN send_reminder DROP DEFAULT;
+ALTER TABLE alert_notification ALTER COLUMN send_reminder TYPE integer USING send_reminder::integer;
+ALTER TABLE alert_notification ALTER COLUMN disable_resolve_message DROP DEFAULT;
+ALTER TABLE alert_notification ALTER COLUMN disable_resolve_message TYPE integer USING send_reminder::integer;
 ALTER TABLE dashboard ALTER COLUMN is_folder DROP DEFAULT;
 ALTER TABLE dashboard ALTER COLUMN is_folder TYPE integer USING is_folder::integer;
 ALTER TABLE dashboard ALTER COLUMN has_acl DROP DEFAULT;
@@ -115,11 +119,16 @@ ALTER TABLE team_member ALTER COLUMN external TYPE integer USING external::integ
 ALTER TABLE temp_user ALTER COLUMN email_sent TYPE integer USING email_sent::integer;
 ALTER TABLE "user" ALTER COLUMN is_admin TYPE integer USING is_admin::integer;
 ALTER TABLE "user" ALTER COLUMN email_verified TYPE integer USING email_verified::integer;
+ALTER TABLE "user" ALTER COLUMN is_disabled DROP DEFAULT;
+ALTER TABLE "user" ALTER COLUMN is_disabled TYPE integer USING is_disabled::integer;
+ALTER TABLE user_auth_token ALTER COLUMN auth_token_seen TYPE integer USING auth_token_seen::integer;
 SQL
 
 # Remove default org
 $PSQL_CMD -c "DELETE from org where id=1;"
 
+# Remove default org_user
+$PSQL_CMD -c "DELETE from org_user where id=1;"
 
 #Import PostgreSQL dumps into Grafana DB
 for f in $3/*.dump.psql
@@ -142,6 +151,20 @@ ALTER TABLE alert_notification
       ELSE NULL
       END;
 ALTER TABLE alert_notification ALTER COLUMN is_default SET DEFAULT false;
+ALTER TABLE alert_notification
+  ALTER COLUMN send_reminder TYPE boolean
+    USING CASE WHEN send_reminder = 0 THEN FALSE
+      WHEN send_reminder = 1 THEN TRUE
+      ELSE NULL
+      END;
+ALTER TABLE alert_notification ALTER COLUMN send_reminder SET DEFAULT false;
+ALTER TABLE alert_notification
+  ALTER COLUMN disable_resolve_message TYPE boolean
+    USING CASE WHEN disable_resolve_message = 0 THEN FALSE
+      WHEN disable_resolve_message = 1 THEN TRUE
+      ELSE NULL
+      END;
+ALTER TABLE alert_notification ALTER COLUMN disable_resolve_message SET DEFAULT false;
 ALTER TABLE dashboard
   ALTER COLUMN is_folder TYPE boolean
     USING CASE WHEN is_folder = 0 THEN FALSE
@@ -225,6 +248,19 @@ ALTER TABLE "user"
   ALTER COLUMN email_verified TYPE boolean
     USING CASE WHEN email_verified = 0 THEN FALSE
       WHEN email_verified = 1 THEN TRUE
+      ELSE NULL
+      END;
+ALTER TABLE "user"
+  ALTER COLUMN is_disabled TYPE boolean
+    USING CASE WHEN is_disabled = 0 THEN FALSE
+      WHEN is_disabled = 1 THEN TRUE
+      ELSE NULL
+      END;
+ALTER TABLE "user" ALTER COLUMN is_disabled SET DEFAULT false;
+ALTER TABLE user_auth_token
+  ALTER COLUMN auth_token_seen TYPE boolean
+    USING CASE WHEN auth_token_seen = 0 THEN FALSE
+      WHEN auth_token_seen = 1 THEN TRUE
       ELSE NULL
       END;
 SQL
