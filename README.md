@@ -43,11 +43,13 @@ Run migration script:
 You can change the default `python` and `psql` commands using environment
 variables.
 
-Eg: if you want run it using `python2` pointing to a remote postgres database:
+Eg: if you want run it using `python2` and a remote postgres database:
 
     PYTHON_CMD=python2 \
     PSQL_CMD='psql -h PG_HOST -U PG_USER' \
     ./migrator.sh sqlite_to_postgres.py ./grafana.db . 2>&1 | tee migration.log
+    
+or use `sudo`:
 
     PSQL_CMD='sudo -u postgres psql grafana' \
       ./migrator.sh sqlite_to_postgres.py ./grafana.db . 2>&1 | tee migration.log
