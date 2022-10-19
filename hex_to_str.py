@@ -6,7 +6,7 @@ import binascii
 
 for line in fileinput.input(inplace = 1):
     if re.search('X\'([a-fA-F0-9]+)\'', line) is not None:
-        unhexed_string = binascii.unhexlify(re.search('X\'([a-fA-F0-9]+)\'', line).group(1))
+        unhexed_string = binascii.unhexlify(re.search('X\'([a-fA-F0-9]+)\'', line).group(1)).decode("UTF-8")
         unhexed_string = unhexed_string.replace("'", "''")
         line = line.replace(re.search('X\'([a-fA-F0-9]+)\'', line).group(1),unhexed_string)
         print line
