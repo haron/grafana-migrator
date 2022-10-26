@@ -6,13 +6,17 @@ This code is an adaption of [this gist](https://gist.github.com/pizjix/158e63249
 
 ## Tested Versions of Grafana
 
-This code has been explicity tested with databases from Grafana 6.3.5. Other versions may or may not work without modification.
+This code has been explicity tested with databases from Grafana 9.1.5. Other versions may or may not work without modification.
 
 ## Prerequisites
 
-All commands are executed on PostgreSQL server. I assume that Grafana is running on the same server as PostgreSQL, otherwise, commands related to Grafana should be corrected accordingly. This README covers Ubuntu 16.04 only.
+All commands are executed on PostgreSQL server. I assume that Grafana is running on the same server as PostgreSQL, otherwise, commands related to Grafana should be corrected accordingly. This README covers Ubuntu 16.04 and RHEL 8
 
+Ubuntu :
     sudo apt-get install sqlite3 libsqlite3-dev
+
+RHEL :
+    sudo dnf install sqlite-3 sqlite-libs-3
 
 ## Migration
 
@@ -45,7 +49,7 @@ variables.
 
 Eg: if you want run it using `python2` and a remote postgres database:
 
-    PYTHON_CMD=python2 \
+    PYTHON_CMD=python3 \
     PSQL_CMD='psql -h PG_HOST -U PG_USER' \
     ./migrator.sh sqlite_to_postgres.py ./grafana.db . 2>&1 | tee migration.log
     
